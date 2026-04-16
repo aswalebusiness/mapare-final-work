@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapare Dental - Premium Dental Care</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --brand-brown: #4a2c1d;
+            --brand-orange: #f39200;
+            --bg-light: #fdfdfd;
+            --text-gray: #666;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding-top: 70px;
+            overflow-x: hidden;
+            background-color: var(--bg-light);
+        }
+
+        /* --- 1. TOP NAV BAR --- */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            height: 70px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+            box-sizing: border-box;
+            z-index: 1000;
+            border-bottom: 1px solid #eee;
+        }
+
+        .logo-section { display: flex; align-items: center; gap: 10px; }
+        .logo-img { height: 45px; width: auto; border-radius: 4px; }
+        
+        .nav-right { display: flex; align-items: center; gap: 10px; }
+
+        /* NAV LINKS FOR DESKTOP - HIDDEN ON MOBILE */
+        .desktop-nav-links { display: none; }
+        .desktop-nav-links a { 
+            text-decoration: none; 
+            color: var(--brand-brown); 
+            font-weight: bold; 
+            font-size: 14px; 
+            margin: 0 12px;
+        }
+
+        .call-btn-header, .book-btn-header {
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 13px;
+            cursor: pointer;
+            border: none;
+            display: flex; align-items: center; gap: 5px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+        .call-btn-header { background: var(--brand-brown); }
+        .book-btn-header { background: var(--brand-orange); }
+
+        /* --- 2. CALL DROPDOWN --- */
+        .call-dropdown {
+            display: none;
+            position: absolute;
+            top: 65px;
+            right: 15px;
+            width: 280px;
+            background: white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            border-radius: 8px;
+            padding: 20px;
+            z-index: 3000;
+        }
+        .call-dropdown.active { display: block; }
+        .call-option { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
+        .call-option:last-child { border-bottom: none; }
+        .call-info h4 { margin: 0; font-size: 14px; color: #333; }
+        .call-info p { margin: 2px 0 0; font-size: 13px; color: var(--brand-brown); font-weight: bold; }
+
+        /* --- 3. SIDE DRAWER --- */
+        .menu-icon { font-size: 24px; cursor: pointer; color: var(--brand-brown); }
+        .side-drawer {
+            position: fixed;
+            top: 0; right: -280px;
+            width: 280px; height: 100%;
+            background: white;
+            box-shadow: -2px 0 10px rgba(0,0,0,0.2);
+            transition: 0.3s;
+            z-index: 4000;
+            padding-top: 60px;
+        }
+        .side-drawer.active { right: 0; }
+        .side-drawer a { display: block; padding: 15px 25px; text-decoration: none; color: var(--brand-brown); font-weight: bold; border-bottom: 1px solid #f9f9f9; }
+        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 3500; }
+
+        /* --- 4. HERO SECTION --- */
+        .hero-container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+        .hero-slider {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            background: #000;
+        }
+        .slider-wrapper {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+        .slider-wrapper img {
+            width: 100%;
+            flex-shrink: 0;
+            display: block;
+        }
+        .slider-btn {
+            position: absolute;
+            top: 50%; transform: translateY(-50%);
+            background: rgba(0,0,0,0.4); color: white; border: none;
+            padding: 12px; cursor: pointer; z-index: 10;
+            border-radius: 50%; width: 40px; height: 40px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .btn-next { right: 10px; }
+        .btn-prev { left: 10px; }
+
+        .hero-info {
+            display: none; 
+            padding: 30px 20px;
+            background: white;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .hero-info h1 { font-size: 24px; color: #222; margin: 0 0 15px; line-height: 1.2; }
+        .rating-box { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
+        .rating-box img { width: 30px; }
+        .stars { color: #f39200; font-size: 18px; }
+        .info-item { display: flex; gap: 12px; margin-bottom: 15px; color: #444; font-size: 15px; line-height: 1.4; }
+        .info-item i { color: var(--brand-orange); margin-top: 3px; }
+        .get-directions { color: var(--brand-orange); font-weight: bold; text-decoration: none; border-bottom: 1px solid var(--brand-orange); align-self: flex-start; }
+
+        /* --- 5. MARQUEE --- */
+        .marquee-container {
+            background: #fff;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        .marquee-content {
+            display: inline-block;
+            animation: scroll 20s linear infinite;
+        }
+        .marquee-item { display: inline-block; margin: 0 30px; font-weight: bold; color: #555; }
+        .marquee-item span { color: var(--brand-orange); }
+
+        @keyframes scroll {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
+        }
+
+        /* --- 6. APPOINTMENT SECTION --- */
+        .appointment-section {
+            padding: 40px 15px;
+            background: #fffef5;
+            max-width: 1200px;
+            margin: 0 auto 80px;
+            border-radius: 0;
+            border-bottom: 1px solid #f9e8d0;
+        }
+        .appointment-section h2 { color: var(--brand-brown); text-align: center; margin-bottom: 25px; font-size: 22px; }
+        .booking-form { display: grid; grid-template-columns: 1fr; gap: 15px; }
+        .form-group input, .form-group select {
+            width: 100%; box-sizing: border-box;
+            padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px;
+        }
+        .book-btn {
+            background: var(--brand-orange); color: white; padding: 15px;
+            border: none; border-radius: 5px; font-weight: bold; font-size: 16px; cursor: pointer;
+        }
+
+        /* --- 7. BOTTOM NAV --- */
+        .bottom-nav {
+            position: fixed; bottom: 0; width: 100%; background: #fff;
+            display: flex; justify-content: space-around; padding: 10px 0;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05); z-index: 1000;
+        }
+        .nav-link { text-align: center; text-decoration: none; color: #666; font-size: 10px; width: 25%; }
+        .nav-link i { display: block; font-size: 20px; color: var(--brand-brown); margin-bottom: 3px; }
+        .fa-whatsapp { color: #25D366; }
+        .fa-instagram { color: #E1306C; }
+
+        /* --- LARGE SCREEN FIXES --- */
+        @media (min-width: 992px) {
+            /* SHOW MENU IN NAVBAR INSTEAD OF ICON */
+            .menu-icon { display: none; }
+            .desktop-nav-links { display: block; }
+            .nav-right { gap: 20px; }
+
+            .hero-container {
+                flex-direction: row;
+                height: 450px;
+                background: white;
+            }
+            .hero-slider { width: 50%; height: 100%; }
+            .slider-wrapper, .slider-wrapper img { height: 100%; object-fit: cover; }
+            
+            .hero-info { 
+                display: flex; 
+                width: 50%; 
+                padding: 0 60px; 
+            }
+            .hero-info h1 { font-size: 32px; }
+
+            .booking-form { grid-template-columns: 1fr 1fr; gap: 20px; }
+            .book-btn { grid-column: span 2; width: 200px; margin: 0 auto; }
+            .navbar { padding: 0 5%; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="overlay" id="overlay" onclick="closeAll()"></div>
+
+    <nav class="navbar">
+        <div class="logo-section">
+            <img src="logo.jpeg" alt="Logo" class="logo-img">
+            <div class="logo-text">
+                <strong style="color: var(--brand-brown); font-size: 20px;">Mapare:)</strong>
+                <div style="font-size: 9px; letter-spacing: 2px; color: #888;">DENTAL</div>
+            </div>
+        </div>
+
+        <div class="desktop-nav-links">
+            <a href="#">Home</a>
+            <a href="#">Treatments</a>
+            <a href="#">Our Doctors</a>
+            <a href="#">Find Clinic</a>
+        </div>
+
+        <div class="nav-right">
+            <a href="appointment-page.html" class="book-btn-header">
+                Book <i class="fas fa-calendar-alt"></i>
+            </a>
+
+            <div class="call-container">
+                <button class="call-btn-header" onclick="toggleCallDropdown()">
+                    Call Us <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="call-dropdown" id="callDropdown">
+                    <div class="call-option"><div class="call-info"><h4>North India</h4><p>+91 9667353232</p></div></div>
+                    <div class="call-option"><div class="call-info"><h4>South India</h4><p>+91 9393553232</p></div></div>
+                    <div class="call-option"><div class="call-info"><h4>Toll Free</h4><p>1800-309-3232</p></div></div>
+                </div>
+            </div>
+            <i class="fas fa-bars menu-icon" onclick="toggleMenu()"></i>
+        </div>
+    </nav>
+
+    <div class="side-drawer" id="sideDrawer">
+        <a href="#">Home</a>
+        <a href="#">Treatments</a>
+        <a href="#">Our Doctors</a>
+        <a href="#">Find Clinic</a>
+    </div>
+
+    <div class="hero-container">
+        <div class="hero-slider">
+            <button class="slider-btn btn-prev" onclick="moveSlider(-1)"><i class="fas fa-chevron-left"></i></button>
+            <div class="slider-wrapper" id="sliderWrapper">
+                <img src="Hero1.jpeg" alt="Hero 1">
+                <img src="Hero2.jpeg" alt="Hero 2">
+                <img src="Hero3.jpeg" alt="Hero 3">
+            </div>
+            <button class="slider-btn btn-next" onclick="moveSlider(1)"><i class="fas fa-chevron-right"></i></button>
+        </div>
+
+        <div class="hero-info">
+            <h1>Best Dental clinic in Mehdipatnam, Hyderabad</h1>
+            <div class="rating-box">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_Color_Logo.svg" alt="G">
+                <div>
+                    <div style="font-weight: bold;">4.9/5 Average Rating</div>
+                    <div class="stars">★★★★★</div>
+                </div>
+            </div>
+            <div class="info-item">
+                <i class="far fa-clock"></i>
+                <span>10:00:00 - 07:00:00 (Closed on Mon)</span>
+            </div>
+            <div class="info-item">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>10-3-5/1, 3rd Floor, Above Lakme Salon, Behind Rythu Bazar, Asif Nagar Main Road, Mehdipatnam</span>
+            </div>
+            <a href="#" class="get-directions">Get Directions</a>
+        </div>
+    </div>
+
+    <div class="marquee-container">
+        <div class="marquee-content">
+            <div class="marquee-item"><span>1L+</span> Happy patients</div>
+            <div class="marquee-item"><span>3+</span> Clinics</div>
+            <div class="marquee-item"><span>25+</span> Years Exp</div>
+            <div class="marquee-item"><span>4.9/5</span> Rating</div>
+            <div class="marquee-item"><span>1L+</span> Happy patients</div>
+            <div class="marquee-item"><span>3+</span> Clinics</div>
+            <div class="marquee-item"><span>25+</span> Years Exp</div>
+            <div class="marquee-item"><span>4.9/5</span> Rating</div>
+        </div>
+    </div>
+
+    <section class="appointment-section">
+        <h2>Book Your Appointment</h2>
+        <form class="booking-form">
+            <div class="form-group"><input type="text" placeholder="Your Name" required></div>
+            <div class="form-group"><input type="tel" placeholder="Mobile Number" required></div>
+            <div class="form-group">
+                <select required>
+                    <option value="" disabled selected>Select City</option>
+                    <option>Hyderabad</option>
+                    <option>Mumbai</option>
+                    <option>Pune</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <select required>
+                    <option value="" disabled selected>Treatment Type</option>
+                    <option>Braces</option>
+                    <option>Root Canal</option>
+                    <option>General Checkup</option>
+                </select>
+            </div>
+            <button type="submit" class="book-btn">BOOK NOW</button>
+        </form>
+    </section>
+
+    <nav class="bottom-nav">
+        <a href="#" class="nav-link"><i class="fas fa-calendar-check"></i>Appointment</a>
+        <a href="#" class="nav-link"><i class="fab fa-whatsapp"></i>Whatsapp</a>
+        <a href="#" class="nav-link"><i class="fas fa-phone-alt"></i>Callback</a>
+        <a href="#" class="nav-link"><i class="fab fa-instagram"></i>Instagram</a>
+    </nav>
+
+    <script>
+        let currentSlide = 0;
+        const sliderWrapper = document.getElementById('sliderWrapper');
+        const slidesCount = 3;
+        
+        function moveSlider(direction) {
+            currentSlide = (currentSlide + direction + slidesCount) % slidesCount;
+            sliderWrapper.style.transform = `translateX(-${currentSlide * 100}%)`;
+        }
+
+        function toggleCallDropdown() {
+            const drop = document.getElementById('callDropdown');
+            drop.classList.toggle('active');
+            document.getElementById('overlay').style.display = drop.classList.contains('active') ? 'block' : 'none';
+        }
+
+        function toggleMenu() {
+            const drawer = document.getElementById('sideDrawer');
+            drawer.classList.toggle('active');
+            document.getElementById('overlay').style.display = drawer.classList.contains('active') ? 'block' : 'none';
+        }
+
+        function closeAll() {
+            document.getElementById('sideDrawer').classList.remove('active');
+            document.getElementById('callDropdown').classList.remove('active');
+            document.getElementById('overlay').style.display = 'none';
+        }
+    </script>
+
+</body>
+</html>
